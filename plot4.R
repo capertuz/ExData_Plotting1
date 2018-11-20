@@ -1,0 +1,38 @@
+#1. set Working directory
+
+filePath <- "C:\\Coursera\\Data Science\\Plotting\\household_power_consumption"
+filePathData <- filePath
+setwd(filePathData)
+
+
+#2. Get the data 
+
+data <- read.table("household_power_consumption.txt", sep = ";", skip = 66637, nrows = 2880)
+
+#3. Add names
+
+names <- c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3")
+colnames(data) <- names
+
+#4. Create DateTime Column
+
+data$DateTime <- with(data, paste0(data$Date," ",data$Time))
+data$DateTime <- strptime(data$DateTime,format = "%d/%m/%Y %H:%M:%S")
+
+#5. Create plot and save to device
+
+png(filename="plot4.png")
+par(mfrow= c(2,2), mar = c(4,4,2,1), oma = c(0,0,0,0))
+
+plot(data$DateTime,data$Global_active_power, type = "l", ylab = "Global Active Power", xlab = "")
+
+plot(data$DateTime,data$Voltage, type = "l", ylab = "Voltage", xlab = "datetime")
+
+plot(data$DateTime,data$Sub_metering_1, type = "l", ylab = "Energy Sub Metering", xlab = "", col = "black")
+lines(data$DateTime,data$Sub_metering_2, type = "l", ylab = "", xlab = "", col = "red")
+lines(data$DateTime,data$Sub_metering_3, type = "l", ylab = "", xlab = "", col = "blue")
+legend("topright",bty="n", lwd=c(3,2), col=c("black","red","blue"), legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+
+plot(data$DateTime,data$Global_reactive_power, type = "l", ylab = "Global Reactive Power", xlab = "datetime")
+
+dev.off()
